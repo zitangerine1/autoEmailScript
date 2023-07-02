@@ -2,15 +2,16 @@ import smtplib
 import ssl
 import time, random
 
+from getpass import getpass
 from email.message import EmailMessage
 from readUtils import getSponsorList
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# TODO - HTML emails.
+password = getpass('Enter your email password: ')
 
 emailSender = 'sponsor.cloudhacks@gmail.com'
-emailPassword = 'wnkvooxnmavgofav'
+emailPassword = password
 emailReceiver = 'zitangr@gmail.com'
 
 sponsorList = getSponsorList("./assets/CloudHacks Dummy Test Data.csv")
@@ -25,15 +26,14 @@ for sponsor in sponsorList:
 
     msg.set_content(f'Hello {sponsor[0]},\n\nThis is a test text email.\n\nBest,\nCloudHacks Team')
     msg.add_alternative(f"""\
-    <!DOCTYPE html>
-        <html>
-            <body>
-                <p>Hello {sponsor[0]},</p>
-                <p>This is a test email.</p>
-                <p>Best,</p>
-                <p>CloudHacks Team</p>
-            </body>
-        </html>
+    <html>
+        <body>
+            <p>Hello {sponsor[0]},</p>
+            <p>This is a test email.</p>
+            <p>Best,</p>
+            <p>CloudHacks Team</p>
+        </body>
+    </html>
                                                 """, subtype='html')
 
     with open('./assets/cloudhacks_prospectus.pdf', 'rb') as f:
