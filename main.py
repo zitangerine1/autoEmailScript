@@ -1,17 +1,18 @@
 import smtplib
 import ssl
+import random, time
 from email.message import EmailMessage
 
-# TODO - Hide the email password, ideally by using environment variables.
 # TODO - Integrate get from spreadsheet and send email.
-# TODO - Attach PDF prospectus to email.
+
+pwdInput = input('Enter password: ')
 
 emailSender = 'sponsor.cloudhacks@gmail.com'
-emailPassword = 'wnkvooxnmavgofav'
+emailPassword = pwdInput
 emailReceiver = 'zitangr@gmail.com'
 
 subject = 'Test Email'
-body = 'This is a test email'
+body = open('./assets/emailbody.txt', 'r').read()
 
 msg = EmailMessage()
 msg['From'] = emailSender
@@ -27,6 +28,9 @@ msg.add_attachment(file_data, maintype='application', subtype='octet-stream', fi
 
 context = ssl.create_default_context()
 
-with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-    smtp.login(emailSender, emailPassword)
-    smtp.sendmail(emailSender, emailReceiver, msg.as_string())
+for i in range(1):
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(emailSender, emailPassword)
+        smtp.sendmail(emailSender, emailReceiver, msg.as_string())
+
+    print(f'Email sent to {emailReceiver} successfully.')
