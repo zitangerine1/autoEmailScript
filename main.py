@@ -1,36 +1,38 @@
 import smtplib
 import ssl
-import random, time
 from email.message import EmailMessage
+from readUtils import getSponsorList
 
+# TODO - Hide the email password, ideally by using environment variables.
 # TODO - Integrate get from spreadsheet and send email.
+# TODO - Attach PDF prospectus to email.
 
-pwdInput = input('Enter password: ')
+#emailSender = 'sponsor.cloudhacks@gmail.com'
+#emailPassword = 'wnkvooxnmavgofav'
+#emailReceiver = 'zitangr@gmail.com'
 
-emailSender = 'sponsor.cloudhacks@gmail.com'
-emailPassword = pwdInput
-emailReceiver = 'zitangr@gmail.com'
+sponsorList = getSponsorList("assets\CloudHacks Dummy Test Data.csv")
 
-subject = 'Test Email'
-body = open('./assets/emailbody.txt', 'r').read()
+for sponsor in sponsorList:
+    subject = 'Test Email'
+    body = 'This is a test email'
 
-msg = EmailMessage()
-msg['From'] = emailSender
-msg['To'] = emailReceiver
-msg['Subject'] = subject
-msg.set_content(body)
+    msg = EmailMessage()
+    msg['From'] = emailSender
+    msg['To'] = sponsor[1]
+    msg['Subject'] = subject
+    msg.set_content(body)
 
-with open('./assets/cloudhacks_prospectus.pdf', 'rb') as f:
-    file_data = f.read()
-    file_name = f.name
+    # sponsor[0] is sponsor name
 
-msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename='cloudhacks_prospectus.pdf')
+    with open('./assets/cloudhacks_prospectus.pdf', 'rb') as f:
+        file_data = f.read()
+        file_name = f.name
 
-context = ssl.create_default_context()
+    msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename='cloudhacks_prospectus.pdf')
 
-for i in range(1):
+    context = ssl.create_default_context()
+
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
         smtp.login(emailSender, emailPassword)
         smtp.sendmail(emailSender, emailReceiver, msg.as_string())
-
-    print(f'Email sent to {emailReceiver} successfully.')
