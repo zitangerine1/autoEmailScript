@@ -9,12 +9,11 @@ from email.utils import make_msgid
 from readUtils import getSponsorList
 
 password = getpass('Enter access key: ')
-batchSize = int(input('Enter email batch size: '))
 
 emailSender = 'sponsor.cloudhacks@gmail.com'
 emailPassword = password
 
-sponsorList = getSponsorList("./assets/dummy_data.csv")
+sponsorList = getSponsorList("./assets/maillist.csv")
 image_cid = make_msgid()
 
 for sponsor in sponsorList:
@@ -67,17 +66,8 @@ for sponsor in sponsorList:
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
         smtp.login(emailSender, emailPassword)
 
-        batchCount = 0
-        batchNum = 0
-
-        if batchCount < batchSize:
-            print(f'Sending email to {sponsor[0]}...')
-            time.sleep(random.randint(3, 10))
-            smtp.sendmail(emailSender, emailReceiver, msg.as_string())
-            batchCount += 1
-        else:
-            print(f'Batch {batchNum} sent. Waiting for cooldown...')
-            time.sleep(random.randint(30, 60))
-            batchNum += 1
+        time.sleep(random.randint(3, 10))
+        smtp.sendmail(emailSender, emailReceiver, msg.as_string())
+        print(f'Sent email to {sponsor[0]}.')
 
         
