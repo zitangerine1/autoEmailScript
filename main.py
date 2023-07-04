@@ -17,7 +17,6 @@ emailPassword = password
 sponsorList = getSponsorList("./assets/dummy_data.csv")
 image_cid = make_msgid()
 
-
 for sponsor in sponsorList:
     emailReceiver = f'{sponsor[1]}'
     subject = (f'CloudHacks 2023 and {sponsor[0]} Partnership')
@@ -61,11 +60,9 @@ for sponsor in sponsorList:
     msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename='cloudhacks_prospectus.pdf')
     context = ssl.create_default_context()
 
-
     with open('./assets/images/postscript.png', 'rb') as img:
         maintype, subtype = mimetypes.guess_type(img.name)[0].split('/')
         msg.get_payload()[1].add_related(img.read(), maintype=maintype,subtype=subtype, cid=image_cid)
-
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
         smtp.login(emailSender, emailPassword)
